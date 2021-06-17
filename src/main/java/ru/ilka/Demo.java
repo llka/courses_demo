@@ -1,25 +1,55 @@
 package ru.ilka;
 
+import ru.ilka.collection.CompareCollectionsDemo;
 import ru.ilka.insect.Butterfly;
+import ru.ilka.list.CustomLinkedList;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Demo {
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(System.in));
+    public static void main(String[] args) {
+        //CompareCollectionsDemo.compareRemoveIfExecutionTime_customLinkedList_vs_ArrayList(1000);
+        //CompareCollectionsDemo.compareRemoveIfExecutionTime_customLinkedList_vs_ArrayList(1000_000);
+        //CompareCollectionsDemo.compareRemoveIfExecutionTime_customLinkedList_vs_ArrayList(1000_000_0);
 
-        // Reading data using readLine
-        String name = reader.readLine();
+        //CompareCollectionsDemo.compareRemoveOneByOneViaGetByIndexExecutionTime_LinkedList_vs_ArrayList(1000);
+        //CompareCollectionsDemo.compareRemoveOneByOneViaGetByIndexExecutionTime_LinkedList_vs_ArrayList(10000);
+        //CompareCollectionsDemo.compareRemoveOneByOneViaGetByIndexExecutionTime_LinkedList_vs_ArrayList(100000);
 
+        //CompareCollectionsDemo.compareRemoveOneByOneViaIteratorExecutionTime_LinkedList_vs_ArrayList(1000);
+        CompareCollectionsDemo.compareRemoveOneByOneViaIteratorExecutionTime_LinkedList_vs_ArrayList(100_000);
+        //CompareCollectionsDemo.compareRemoveOneByOneViaIteratorExecutionTime_LinkedList_vs_ArrayList(1_000_000);
+
+        //CompareCollectionsDemo.compareRemoveOneByOneExecutionTime_customLinkedList_vs_LinkedListIterator(100000);
+        //CompareCollectionsDemo.compareRemoveOneByOneExecutionTime_customLinkedList_vs_LinkedListIterator(1_000_000);
+        //CompareCollectionsDemo.compareRemoveOneByOneExecutionTime_customLinkedList_vs_LinkedListIterator(10_000_000);
     }
 
+
+    private static void customLinkedListDemo() {
+        final int SIZE = 10;
+        CustomLinkedList<Integer> customLinkedList = new CustomLinkedList<>();
+        for (int i = 0; i < SIZE; i++) {
+            customLinkedList.add(ThreadLocalRandom.current().nextInt(1, 10));
+        }
+
+        System.out.println("customLinkedList meta: ");
+        System.out.println(customLinkedList);
+        System.out.println("customLinkedList values: ");
+        System.out.println(customLinkedList.getAllNodesValuesAsString());
+
+        customLinkedList.removeIf(val -> val < 4);
+
+        System.out.println("After filtering: ");
+        System.out.println("customLinkedList values: ");
+        System.out.println(customLinkedList.getAllNodesValuesAsString());
+        System.out.println("customLinkedList meta: ");
+        System.out.println(customLinkedList);
+    }
 
     static List<Butterfly> findButterfliesByName(Collection<Butterfly> collection,
                                                  String name) {
