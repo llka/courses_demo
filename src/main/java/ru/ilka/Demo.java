@@ -1,9 +1,12 @@
 package ru.ilka;
 
-import ru.ilka.collection.CompareCollectionsDemo;
+import ru.ilka.auto.Garage;
 import ru.ilka.insect.Butterfly;
 import ru.ilka.list.CustomLinkedList;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,22 +14,38 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Demo {
 
+    private static final Garage garage = new Garage();
+
     public static void main(String[] args) {
-        //CompareCollectionsDemo.compareRemoveIfExecutionTime_customLinkedList_vs_ArrayList(1000);
-        //CompareCollectionsDemo.compareRemoveIfExecutionTime_customLinkedList_vs_ArrayList(1000_000);
-        //CompareCollectionsDemo.compareRemoveIfExecutionTime_customLinkedList_vs_ArrayList(1000_000_0);
 
-        //CompareCollectionsDemo.compareRemoveOneByOneViaGetByIndexExecutionTime_LinkedList_vs_ArrayList(1000);
-        //CompareCollectionsDemo.compareRemoveOneByOneViaGetByIndexExecutionTime_LinkedList_vs_ArrayList(10000);
-        //CompareCollectionsDemo.compareRemoveOneByOneViaGetByIndexExecutionTime_LinkedList_vs_ArrayList(100000);
+        GarageAppMenuActionEnum action = null;
+        while (action != GarageAppMenuActionEnum.EXIT) {
+            action = readActionFromConsole();
+            switch (action) {
+                case EXIT -> System.out.println("Goodbye!");
+                case ADD_VEHICLE -> garage.addVehicle();
+                default -> throw new RuntimeException(String.format("Action %s not implemented.", action));
+            }
+        }
 
-        //CompareCollectionsDemo.compareRemoveOneByOneViaIteratorExecutionTime_LinkedList_vs_ArrayList(1000);
-        CompareCollectionsDemo.compareRemoveOneByOneViaIteratorExecutionTime_LinkedList_vs_ArrayList(100_000);
-        //CompareCollectionsDemo.compareRemoveOneByOneViaIteratorExecutionTime_LinkedList_vs_ArrayList(1_000_000);
+    }
 
-        //CompareCollectionsDemo.compareRemoveOneByOneExecutionTime_customLinkedList_vs_LinkedListIterator(100000);
-        //CompareCollectionsDemo.compareRemoveOneByOneExecutionTime_customLinkedList_vs_LinkedListIterator(1_000_000);
-        //CompareCollectionsDemo.compareRemoveOneByOneExecutionTime_customLinkedList_vs_LinkedListIterator(10_000_000);
+    private static GarageAppMenuActionEnum readActionFromConsole() {
+        System.out.println("Type please next action.");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            String line = reader.readLine().trim();
+            if (line.matches("[0-9]+")) {
+                return GarageAppMenuActionEnum.findActionByCode(Integer.parseInt(line));
+            } else {
+                return GarageAppMenuActionEnum.valueOf(line);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read next action from console.", e);
+        } catch (GarageAppMenuException | IllegalArgumentException exception) {
+            System.out.println(exception.getMessage() + " Type please either action name in uppercase, or it's numeric code. ");
+            return readActionFromConsole();
+        }
     }
 
 
