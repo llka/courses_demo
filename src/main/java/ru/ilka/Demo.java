@@ -1,33 +1,117 @@
 package ru.ilka;
 
-import ru.ilka.auto.Garage;
 import ru.ilka.insect.Butterfly;
 import ru.ilka.list.CustomLinkedList;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Demo {
+    private static final String DELIMETER = "_";
+    private static final char EXIT_COMMAND = '0';
+    private static final char ADD_COMMAND = '1';
+    private static final char GET_BY_KEY_COMMAND = '2';
+    private static final char GET_ALL_COMMAND = '3';
 
-    private static final Garage garage = new Garage();
+    private static final String AVAILABLE_COMMANDS = new StringBuilder()
+            .append("Available commands list: ")
+            .append("\n\tExit: 0")
+            .append("\n\tAdd key value pair: 1_key_value")
+            .append("\n\tGet value by key: 2_key")
+            .append("\n\tGet all key values set: 3")
+            .toString();
+
 
     public static void main(String[] args) {
 
-        GarageAppMenuActionEnum action = null;
-        while (action != GarageAppMenuActionEnum.EXIT) {
-            action = readActionFromConsole();
-            switch (action) {
-                case EXIT -> System.out.println("Goodbye!");
-                case ADD_VEHICLE -> garage.addVehicle();
-                default -> throw new RuntimeException(String.format("Action %s not implemented.", action));
+        Map<String, String> map = new HashMap<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println(AVAILABLE_COMMANDS);
+        while (true) {
+            System.out.println("Type next command please.");
+
+            String line = null;
+            try {
+                line = reader.readLine();
+            } catch (IOException e) {
+                throw new RuntimeException("Cannpt read line from console");
+            }
+            if (!line.matches("(0)" +
+                    "|(1_[a-zA-Z0-9]{1,10}_[a-zA-Z0-9]{1,10})" +
+                    "|(2_[a-zA-Z0-9]{1,10})" +
+                    "|(3)")) {
+                System.out.println("Command is invalid!");
+                System.out.println(AVAILABLE_COMMANDS);
+                continue;
+            }
+            if (line.isBlank()) {
+                System.out.println("Command must be not empty!");
+                continue;
+            }
+
+            char command = line.charAt(0);
+            switch (command) {
+                case EXIT_COMMAND: {
+                    System.out.println("Goodbye.");
+                    return;
+                }
+                case ADD_COMMAND: {
+                    String[] splittedLine = line.split(DELIMETER);
+                    String key = splittedLine[1];
+                    String value = splittedLine[2];
+                    map.put(key, value);
+                    break;
+                }
+                case GET_BY_KEY_COMMAND: {
+                    String[] splittedLine = line.split(DELIMETER);
+                    String key = splittedLine[1];
+                    System.out.println(map.get(key));
+                    break;
+                }
+                case GET_ALL_COMMAND: {
+                    System.out.println(map);
+                    break;
+                }
+                default: {
+                    System.out.println("No such command!");
+                }
             }
         }
+    }
 
+
+    public void writeFile() {
+        String PATH = "/data";
+        String directoryName = PATH + "/directory";
+        String fileName = Instant.now().toString() + ".txt";
+
+        File directory = new File(directoryName);
+        if (!directory.exists()) {
+            directory.mkdir();
+            // If you require it to make the entire directory path including parents,
+            // use directory.mkdirs(); here instead.
+        }
+
+        File file = new File(directoryName + "/" + fileName);
+        try (FileWriter fw = new FileWriter(file.getAbsoluteFile())) {
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("test");
+            bw.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Ups", e);
+        }
     }
 
     private static GarageAppMenuActionEnum readActionFromConsole() {
