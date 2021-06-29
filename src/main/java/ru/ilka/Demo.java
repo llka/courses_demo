@@ -1,49 +1,54 @@
 package ru.ilka;
 
-import ru.ilka.fileutil.FileReaderUtil;
 import ru.ilka.insect.Butterfly;
 import ru.ilka.list.CustomLinkedList;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Demo {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 0; i < 20; i++) {
+            System.out.println(fib(i));
+        }
+//
+//        Thread talk = new TalkThread(1000);
+//        Thread walk = new Thread(new WalkRunnable(1000));
+//
+////        walk.setPriority(Thread.MAX_PRIORITY);
+////        talk.setPriority(Thread.MIN_PRIORITY);
+//
+//        talk.start();
+//        walk.start();
+//        walk.join();
+//
+//        throw new RuntimeException("Ups");
 
-        System.out.println(FileReaderUtil.readFile("data/input.txt"));
-
+//        List<String> lines = FileReaderUtil.readFile("data/input.txt");
+//        String text = String.join(" ", lines);
+//        Long uniqueWordsCount = findUniqueWordsCountInText(text);
+//
+//        FileWriterUtil.writeToFileEnd("data/output.txt", "uniqueWordsCount: " + uniqueWordsCount);
     }
 
-    public void writeFile() {
-        String PATH = "/data";
-        String directoryName = PATH + "/directory";
-        String fileName = Instant.now().toString() + ".txt";
 
-        File directory = new File(directoryName);
-        if (!directory.exists()) {
-            directory.mkdir();
-            // If you require it to make the entire directory path including parents,
-            // use directory.mkdirs(); here instead.
-        }
-
-        File file = new File(directoryName + "/" + fileName);
-        try (FileWriter fw = new FileWriter(file.getAbsoluteFile())) {
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("test");
-            bw.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Ups", e);
-        }
+    public static long findWordsCountOccurredOnce(String text) {
+        Map<String, Long> map = Arrays.stream(text.trim().split("\\s+"))
+                .collect(Collectors.groupingBy(Function.identity(), HashMap::new, Collectors.counting()));
+        return map.values().stream()
+                .filter(val -> val == 1)
+                .count();
     }
 
     private static GarageAppMenuActionEnum readActionFromConsole() {
@@ -63,7 +68,6 @@ public class Demo {
             return readActionFromConsole();
         }
     }
-
 
     private static void customLinkedListDemo() {
         final int SIZE = 10;
@@ -96,6 +100,16 @@ public class Demo {
             }
         }
         return filtered;
+    }
+
+    static int fib(int n) {
+        if (n == 0) {
+            return 0;
+        }
+        if (n == 1 || n == 2) {
+            return 1;
+        }
+        return (fib(n - 1) + fib(n - 2));
     }
 
 
