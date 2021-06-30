@@ -2,6 +2,8 @@ package ru.ilka;
 
 import ru.ilka.insect.Butterfly;
 import ru.ilka.list.CustomLinkedList;
+import ru.ilka.multithreading.CountUpdater;
+import ru.ilka.multithreading.CounterWrapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +21,46 @@ import java.util.stream.Collectors;
 
 public class Demo {
 
-    public static void main(String[] args) throws InterruptedException {
-        for (int i = 0; i < 20; i++) {
-            System.out.println(fib(i));
-        }
+    public static void main(String[] args) {
+        CounterWrapper counterWrapper = new CounterWrapper(0);
+
+        System.out.println(counterWrapper);
+
+        Thread a = new Thread(new CountUpdater(counterWrapper, 1, 10));
+        Thread b = new Thread(new CountUpdater(counterWrapper, 1, 10));
+        Thread c = new Thread(new CountUpdater(counterWrapper, 1, 10));
+        Thread d = new Thread(new CountUpdater(counterWrapper, 1, 10));
+
+
+//        int counterWrapper = 0;
+//        System.out.println(counterWrapper);
 //
-//        Thread talk = new TalkThread(1000);
-//        Thread walk = new Thread(new WalkRunnable(1000));
+//        Thread a = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
+//        Thread b = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
+//        Thread c = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
+//        Thread d = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
+
+        a.start();
+        b.start();
+        c.start();
+        d.start();
+
+        try {
+            c.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        c.yield();
+
+        while (a.isAlive() || b.isAlive() || c.isAlive() || d.isAlive()) {
+            System.out.println("working");
+            c.notify();
+        }
+
+        System.out.println("-------------");
+        System.out.println("result: " + counterWrapper);
+        System.out.println("-------------");
 //
 ////        walk.setPriority(Thread.MAX_PRIORITY);
 ////        talk.setPriority(Thread.MIN_PRIORITY);
@@ -40,6 +76,31 @@ public class Demo {
 //        Long uniqueWordsCount = findUniqueWordsCountInText(text);
 //
 //        FileWriterUtil.writeToFileEnd("data/output.txt", "uniqueWordsCount: " + uniqueWordsCount);
+    }
+
+    public static int reversNumber(int number) {
+        int rest;
+        int revers = 0;
+        while (number != 0) {
+
+            rest = number % 10;
+            number = number / 10;
+            revers = revers * 10 + rest;
+            // System.out.println(revers);
+        }
+
+        return revers;
+    }
+
+    public static void countWorldInText(String text) {
+        List<String> list = Arrays.asList(text.split(" "));
+
+        for (String word : list) {
+            if (Collections.frequency(list, word) == 1) {
+                System.out.println(word + ": " + Collections.frequency(list, word));
+            }
+        }
+
     }
 
 

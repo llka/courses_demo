@@ -10,12 +10,7 @@ public class WalkRunnable implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < counter; i++) {
-            System.out.println("Walking");
-//            try {
-//                TimeUnit.SECONDS.sleep(1);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            System.out.println("Walking " + i);
         }
     }
 }
