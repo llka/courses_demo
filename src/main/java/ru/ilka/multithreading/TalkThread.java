@@ -9,6 +9,11 @@ public class TalkThread extends Thread {
         this.name = name;
     }
 
+    public TalkThread() {
+        this.counter = 100;
+        this.name = "default";
+    }
+
     @Override
     public void run() {
         for (int i = 0; i < counter; i++) {

@@ -2,8 +2,7 @@ package ru.ilka;
 
 import ru.ilka.insect.Butterfly;
 import ru.ilka.list.CustomLinkedList;
-import ru.ilka.multithreading.CountUpdater;
-import ru.ilka.multithreading.CounterWrapper;
+import ru.ilka.multithreading.ExecutorServiceDemo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +10,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,45 +20,52 @@ import java.util.stream.Collectors;
 public class Demo {
 
     public static void main(String[] args) {
-        CounterWrapper counterWrapper = new CounterWrapper(0);
 
-        System.out.println(counterWrapper);
+        ExecutorServiceDemo executorServiceDemo = new ExecutorServiceDemo();
+        executorServiceDemo.demo();
 
-        Thread a = new Thread(new CountUpdater(counterWrapper, 1, 10));
-        Thread b = new Thread(new CountUpdater(counterWrapper, 1, 10));
-        Thread c = new Thread(new CountUpdater(counterWrapper, 1, 10));
-        Thread d = new Thread(new CountUpdater(counterWrapper, 1, 10));
-
-
-//        int counterWrapper = 0;
+//        for (int i = 0; i < 100; i++) {
+//            FileWriterUtil.appendInt(i, "data/nums.txt");
+//        }
+//        CounterWrapper counterWrapper = new CounterWrapper(0);
+//
 //        System.out.println(counterWrapper);
 //
-//        Thread a = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
-//        Thread b = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
-//        Thread c = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
-//        Thread d = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
-
-        a.start();
-        b.start();
-        c.start();
-        d.start();
-
-        try {
-            c.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        c.yield();
-
-        while (a.isAlive() || b.isAlive() || c.isAlive() || d.isAlive()) {
-            System.out.println("working");
-            c.notify();
-        }
-
-        System.out.println("-------------");
-        System.out.println("result: " + counterWrapper);
-        System.out.println("-------------");
+//        Thread a = new Thread(new CountUpdater(counterWrapper, 1, 10));
+//        Thread b = new Thread(new CountUpdater(counterWrapper, 1, 10));
+//        Thread c = new Thread(new CountUpdater(counterWrapper, 1, 10));
+//        Thread d = new Thread(new CountUpdater(counterWrapper, 1, 10));
+//
+//
+////        int counterWrapper = 0;
+////        System.out.println(counterWrapper);
+////
+////        Thread a = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
+////        Thread b = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
+////        Thread c = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
+////        Thread d = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
+//
+//        a.start();
+//        b.start();
+//        c.start();
+//        d.start();
+//
+//        try {
+//            c.join();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        c.yield();
+//
+//        while (a.isAlive() || b.isAlive() || c.isAlive() || d.isAlive()) {
+//            System.out.println("working");
+//            c.notify();
+//        }
+//
+//        System.out.println("-------------");
+//        System.out.println("result: " + counterWrapper);
+//        System.out.println("-------------");
 //
 ////        walk.setPriority(Thread.MAX_PRIORITY);
 ////        talk.setPriority(Thread.MIN_PRIORITY);
@@ -91,18 +96,6 @@ public class Demo {
 
         return revers;
     }
-
-    public static void countWorldInText(String text) {
-        List<String> list = Arrays.asList(text.split(" "));
-
-        for (String word : list) {
-            if (Collections.frequency(list, word) == 1) {
-                System.out.println(word + ": " + Collections.frequency(list, word));
-            }
-        }
-
-    }
-
 
     public static long findWordsCountOccurredOnce(String text) {
         Map<String, Long> map = Arrays.stream(text.trim().split("\\s+"))
@@ -172,6 +165,50 @@ public class Demo {
         }
         return (fib(n - 1) + fib(n - 2));
     }
+
+    /**
+     * Вопрос 11.1.
+     * Дан класс:
+     * class InThread implements Runnable{ public void run() {
+     * } }
+     * System.out.println("running...");
+     * Укажите правильные варианты создания потокового объекта (1): 1) new Thread().new InThread();
+     * 2) new Runnable(new InThread());
+     * 3) new Thread(Intread);
+     * 4) new Thread(new InThread());
+     * 5) new InThread().
+     *
+     * Вопрос 11.2.
+     * Укажите методы, определенные в классе java.lang.Thread (4):
+     * 1) join()
+     * 2) getPrioroty()
+     * 3) wait()
+     * 4) notifyAll()
+     * 5) sleep()
+     * 6) getName()
+     *
+     * Вопрос 11.3.
+     * Укажите состояния потока, при вызове на которых метод isAlive() класса java.lang.Thread вернет значение true (4):
+     * 1) NEW
+     * 2) RUNNABLE
+     * 3) BLOCKED
+     * 4) WAITING
+     * 5) TIMED_WAITING
+     * 6) TERMINATED
+     *
+     * Вопрос 11.4.
+     * Дан код:
+     * class InThread implements Runnable{
+     * public void run() {System.out.println("running..."); }
+     * }
+     * public class Quest {
+     * public static void main(String[] args) {
+     * ExecutorService exec = Executors.newFixedThreadPool(2);
+     * exec.execute(new InThread());
+     * exec.execute(new InThread());
+     * exec.execute(new InThread());
+     * exec.shutdown(); while (!exec.isTerminated()) { } }}
+     */
 
 
     /**
