@@ -1,8 +1,9 @@
 package ru.ilka;
 
+import ru.ilka.furniture.FurnitureGenerator;
+import ru.ilka.furniture.Wardrobe;
 import ru.ilka.insect.Butterfly;
 import ru.ilka.list.CustomLinkedList;
-import ru.ilka.multithreading.ExecutorServiceDemo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,69 +20,120 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Demo {
+    private static final int SIZE = 100;
+
+    private static final FurnitureGenerator furnitureGenerator = new FurnitureGenerator();
 
     public static void main(String[] args) {
+        List<Wardrobe> wardrobeList = furnitureGenerator.generateWardrobesList(SIZE);
 
-        ExecutorServiceDemo executorServiceDemo = new ExecutorServiceDemo();
-        executorServiceDemo.demo();
+        System.out.println();
 
-//        for (int i = 0; i < 100; i++) {
-//            FileWriterUtil.appendInt(i, "data/nums.txt");
-//        }
-//        CounterWrapper counterWrapper = new CounterWrapper(0);
+//        WardrobeHeightComparator heightComparator = new WardrobeHeightComparator();
 //
-//        System.out.println(counterWrapper);
+//        Comparator<Wardrobe> widthComparator = new Comparator<Wardrobe>() {
+//            @Override
+//            public int compare(Wardrobe o1, Wardrobe o2) {
+//                return o1.getWidth() - o2.getWidth();
+//            }
+//        };
 //
-//        Thread a = new Thread(new CountUpdater(counterWrapper, 1, 10));
-//        Thread b = new Thread(new CountUpdater(counterWrapper, 1, 10));
-//        Thread c = new Thread(new CountUpdater(counterWrapper, 1, 10));
-//        Thread d = new Thread(new CountUpdater(counterWrapper, 1, 10));
-//
-//
-////        int counterWrapper = 0;
-////        System.out.println(counterWrapper);
-////
-////        Thread a = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
-////        Thread b = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
-////        Thread c = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
-////        Thread d = new Thread(new CountUpdaterForInt(counterWrapper, 1, 1000));
-//
-//        a.start();
-//        b.start();
-//        c.start();
-//        d.start();
-//
-//        try {
-//            c.join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        c.yield();
-//
-//        while (a.isAlive() || b.isAlive() || c.isAlive() || d.isAlive()) {
-//            System.out.println("working");
-//            c.notify();
-//        }
-//
-//        System.out.println("-------------");
-//        System.out.println("result: " + counterWrapper);
-//        System.out.println("-------------");
-//
-////        walk.setPriority(Thread.MAX_PRIORITY);
-////        talk.setPriority(Thread.MIN_PRIORITY);
-//
-//        talk.start();
-//        walk.start();
-//        walk.join();
-//
-//        throw new RuntimeException("Ups");
+//        wardrobeList.sort(heightComparator
+//                .thenComparing(widthComparator)
+//                .thenComparing((a, b) -> a.getDepth() - b.getDepth()));
 
-//        List<String> lines = FileReaderUtil.readFile("data/input.txt");
-//        String text = String.join(" ", lines);
-//        Long uniqueWordsCount = findUniqueWordsCountInText(text);
+
+//        showCollection(wardrobeList);
+
+        /**
+         * The purpose of the class is to provide a type-level solution for representing
+         * optional values instead of null references.
+         */
+//        Optional<String> optional = Optional.empty();
+//        System.out.println(optional.isPresent());
 //
-//        FileWriterUtil.writeToFileEnd("data/output.txt", "uniqueWordsCount: " + uniqueWordsCount);
+//        String s = null;
+//
+//        optional = Optional.ofNullable(s);
+//        System.out.println(optional.isPresent());
+//
+//
+//        s = "Hello";
+//        optional = Optional.of(s);
+//        System.out.println(optional.isPresent());
+//
+//        optional.ifPresent(val -> System.out.println(val.length()));
+
+        /**
+         * Introduced in Java 8, the Stream API is used to process collections of objects.
+         *
+         * A stream is a sequence of objects that supports various methods which
+         * can be pipelined to produce the desired result.
+         * The features of Java stream are –
+         *
+         * A stream is not a data structure instead it takes input from the Collections,
+         * Arrays or I/O channels.
+         *
+         * Streams don’t change the original data structure,
+         * they only provide the result as per the pipelined methods.
+         *
+         * Each intermediate operation is lazily executed and returns a stream as a result,
+         * hence various intermediate operations can be pipelined.
+         * Terminal operations mark the end of the stream and return the result.
+         */
+
+//        wardrobeList.stream()
+//                .map(wardrobe -> "<" + wardrobe.getHeight() + ">" + "\n")
+//                .sorted()
+//                .forEach(value -> FileWriterUtil.writeToFileEnd("data/wardrobes.txt",value));
+//
+
+        Map<Integer, List<Wardrobe>> map = wardrobeList.stream()
+                .collect(Collectors.groupingBy(wardrobe -> wardrobe.getHeight()));
+        map.entrySet()
+                .stream()
+                .sorted(Comparator.comparingInt(Map.Entry::getKey))
+                .forEach(System.out::println);
+
+
+//
+//        // demonstration of map method
+//        List<Integer> square = number.stream().map(x -> x*x).
+//                collect(Collectors.toList());
+//        System.out.println(square);
+//
+//        // create a list of String
+//        List<String> names =
+//                Arrays.asList("Reflection","Collection","Stream");
+//
+//        // demonstration of filter method
+//        List<String> result = names.stream().filter(s->s.startsWith("S")).
+//                collect(Collectors.toList());
+//        System.out.println(result);
+//
+//        // demonstration of sorted method
+//        List<String> show =
+//                names.stream().sorted().collect(Collectors.toList());
+//        System.out.println(show);
+//
+//        // create a list of integers
+//        List<Integer> numbers = Arrays.asList(2,3,4,5,2);
+//
+//        // collect method returns a set
+//        Set<Integer> squareSet =
+//                numbers.stream().map(x->x*x).collect(Collectors.toSet());
+//        System.out.println(squareSet);
+//
+//        // demonstration of forEach method
+//        number.stream().map(x->x*x).forEach(y->System.out.println(y));
+//
+//        // demonstration of reduce method
+//        int even =
+//                number.stream().filter(x->x%2==0).reduce(0,(ans,i)-> ans+i);
+//
+//        System.out.println(even);
+
+
     }
 
     public static int reversNumber(int number) {
@@ -103,6 +156,10 @@ public class Demo {
         return map.values().stream()
                 .filter(val -> val == 1)
                 .count();
+    }
+
+    private static void showCollection(Collection collection) {
+        collection.stream().forEach(System.out::println);
     }
 
     private static GarageAppMenuActionEnum readActionFromConsole() {
@@ -156,14 +213,14 @@ public class Demo {
         return filtered;
     }
 
-    static int fib(int n) {
+    static int fibonacci(int n) {
         if (n == 0) {
             return 0;
         }
         if (n == 1 || n == 2) {
             return 1;
         }
-        return (fib(n - 1) + fib(n - 2));
+        return (fibonacci(n - 1) + fibonacci(n - 2));
     }
 
     /**

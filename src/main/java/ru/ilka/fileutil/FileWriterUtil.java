@@ -11,7 +11,7 @@ import java.io.IOException;
 public class FileWriterUtil {
     public void writeToFileEnd(String path, String message) {
         File file = new File(path);
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true))) {
             bufferedWriter.write(message);
             bufferedWriter.flush();
         } catch (IOException e) {
