@@ -1,14 +1,24 @@
 package ru.ilka.fileutil;
 
-import lombok.experimental.UtilityClass;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@UtilityClass
 public class FileWriterUtil {
+
+    private static FileWriterUtil instance;
+
+    private FileWriterUtil() {
+    }
+
+    public static FileWriterUtil getInstance() {
+        if (instance == null) {
+            instance = new FileWriterUtil();
+        }
+        return instance;
+    }
+
     public void writeToFileEnd(String path, String message) {
         File file = new File(path);
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true))) {
@@ -19,7 +29,7 @@ public class FileWriterUtil {
         }
     }
 
-    public static void appendInt(int value, String path) {
+    public synchronized void appendInt(int value, String path) {
         File file = new File(path);
         try (FileWriter fileWriter = new FileWriter(file, true);
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
