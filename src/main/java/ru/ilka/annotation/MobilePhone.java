@@ -16,5 +16,10 @@ public class MobilePhone {
     public MobilePhone() {
     }
 
+    @Init
+    public void test() {
+        System.out.println("test");
+    }
+
 
 }

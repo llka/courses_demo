@@ -49,7 +49,7 @@ public class Cat extends Animal implements Jumpable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o instanceof Animal) return false;
         Cat cat = (Cat) o;
         return mustache == cat.mustache && legs == cat.legs;
     }

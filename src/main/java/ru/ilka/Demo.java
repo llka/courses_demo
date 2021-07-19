@@ -1,9 +1,11 @@
 package ru.ilka;
 
+import ru.ilka.furniture.FurnitureGenerator;
 import ru.ilka.furniture.Wardrobe;
 import ru.ilka.insect.Butterfly;
+import ru.ilka.json.JsonDemo;
 import ru.ilka.list.CustomLinkedList;
-import ru.ilka.reflection.ReflectionDemo;
+import ru.ilka.multithreading.producerconsumer.Task57Demo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,12 +22,15 @@ import java.util.stream.Collectors;
 
 public class Demo {
     private static final int SIZE = 100;
-
+    private static final FurnitureGenerator furnitureGenerator = new FurnitureGenerator();
+    private static final Task57Demo task57Demo = new Task57Demo();
     private static ObjectGenerator<Wardrobe> wardrobeGenerator;
 
-    public static void main(String[] args) throws IllegalAccessException {
-        ReflectionDemo.demo1();
 
+    public static void main(String[] args) {
+        //task57Demo.demo();
+
+        JsonDemo.demo();
     }
 
     public static int reversNumber(int number) {

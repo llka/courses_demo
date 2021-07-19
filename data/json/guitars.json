@@ -1,0 +1,17 @@
+[
+  {
+    "proizvoditel": "Fender",
+    "title": "ASD-250",
+    "bodyType": "TELECASTER"
+  },
+  {
+    "proizvoditel": "Fender",
+    "title": "QW-200",
+    "bodyType": "TELECASTER"
+  },
+  {
+    "proizvoditel": "Musicman",
+    "title": "super-puper",
+    "bodyType": "STRATOCASTER"
+  }
+]
