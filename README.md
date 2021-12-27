@@ -1,1 +1,1 @@
-Project with Java features demo
+Project with basic Java Core features demo
