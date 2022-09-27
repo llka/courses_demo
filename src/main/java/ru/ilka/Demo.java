@@ -33,17 +33,15 @@ public class Demo {
         JsonDemo.demo();
     }
 
+    //  12345
     public static int reversNumber(int number) {
         int rest;
         int revers = 0;
         while (number != 0) {
-
             rest = number % 10;
             number = number / 10;
             revers = revers * 10 + rest;
-            // System.out.println(revers);
         }
-
         return revers;
     }
 
