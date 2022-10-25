@@ -20,6 +20,13 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
     implementation "com.fasterxml.jackson.core:jackson-databind:${jackson}"
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.7.3'
+
+//    implementation 'org.slf4j:slf4j-api:2.0.1'
+//    testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.1'
+
+
+
 
 
     compileOnly "org.projectlombok:lombok:${lombok}"

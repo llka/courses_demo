@@ -1,58 +1,208 @@
 package ru.ilka;
 
+import lombok.extern.slf4j.Slf4j;
+import ru.ilka.event.Attendee;
+import ru.ilka.event.Event;
+import ru.ilka.event.EventRealm;
+import ru.ilka.fileutil.FileReaderUtil;
 import ru.ilka.furniture.FurnitureGenerator;
 import ru.ilka.furniture.Wardrobe;
 import ru.ilka.insect.Butterfly;
-import ru.ilka.json.JsonDemo;
+import ru.ilka.lambdasrseams.Pair;
 import ru.ilka.list.CustomLinkedList;
 import ru.ilka.multithreading.producerconsumer.Task57Demo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.averagingInt;
+import static java.util.stream.Collectors.flatMapping;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.teeing;
+import static java.util.stream.Collectors.toList;
+
+@Slf4j
 public class Demo {
-    private static final int SIZE = 100;
+
+    private static final int SIZE = 1000;
     private static final FurnitureGenerator furnitureGenerator = new FurnitureGenerator();
     private static final Task57Demo task57Demo = new Task57Demo();
     private static ObjectGenerator<Wardrobe> wardrobeGenerator;
 
+    public static void main(String... args) throws Exception {
+        Function<List<Student>, Map<Integer, Pair<String>>> groupStundetsByCourses = list -> list.stream()
+            .sorted(Comparator.comparing(Student::getName).thenComparing(Student::getSurname))
+            .collect(groupingBy(Student::getCourse,
+                TreeMap::new,
+                teeing(
+                    mapping(student -> student.getName() + " " + student.getSurname(), toList()),
+                    flatMapping(student -> student.getMarks().stream(), averagingInt(Integer::intValue)),
+                    Pair::new
+                )));
+    }
 
-    public static void main(String[] args) {
-        //task57Demo.demo();
+    private static List<Event> generateEvents(int size) {
+        List<Event> events = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            int daysToAdd = ThreadLocalRandom.current().nextInt(1, 1000);
+            Instant eventStart = Instant.now().plus(Period.ofDays(daysToAdd));
+            int attendeesSize = ThreadLocalRandom.current().nextInt(5, 15);
+            Event event = Event.builder()
+                .realm(EventRealm.values()[ThreadLocalRandom.current().nextInt(0, EventRealm.values().length - 1)])
+                .title(String.valueOf(ThreadLocalRandom.current().nextInt(1, 1000)))
+                .startDate(Date.from(eventStart))
+                .attendees(new ArrayList<>(attendeesSize))
+                .build();
+            for (int j = 0; j < attendeesSize; j++) {
+                int minutesToAdd = ThreadLocalRandom.current().nextInt(1, 400);
+                int minutesToLeaveTime = minutesToAdd + ThreadLocalRandom.current().nextInt(1, 400);
+                Attendee attendee = Attendee.builder()
+                    .name(String.valueOf(ThreadLocalRandom.current().nextInt(1, 1000)))
+                    .surname(String.valueOf(ThreadLocalRandom.current().nextInt(1, 1000)))
+                    .joinTime(LocalDateTime.ofInstant(eventStart.plus(minutesToAdd, ChronoUnit.MINUTES), ZoneId.of("UTC")))
+                    .leaveTime(LocalDateTime.ofInstant(eventStart.plus(minutesToLeaveTime, ChronoUnit.MINUTES), ZoneId.of("UTC")))
+                    .build();
+                event.getAttendees().add(attendee);
+            }
+            events.add(event);
+            System.out.println(event);
+            System.out.println();
+        }
+        return events;
+    }
 
-        JsonDemo.demo();
+    /**
+     * Условие: дан текстовый файл со 100 числовыми массивами.
+     * Для каждого массива посчитать произведение минимального и максимального элемента.
+     * Вернуть номер массива(начиная с 1)  с максимальным результатом произведения его минимального и максимального элеметнов.
+     * <p>
+     * <p>
+     * Формат входного файла:
+     * каждая строка - отдельный массив чисел от 0 до 9999
+     * первое число в строке - размер массива
+     * остальные числа в строке - элементы массива
+     * <p>
+     * <p>
+     * Пример 1:
+     * дан файл
+     * 3 1 2 3
+     * 2 1 2
+     * 5 1 2 3 4 5
+     * ответ: 3, потому что у массива из 3й строки наибольший результат произведения макс и мин элементов = 1*5
+     * <p>
+     * Пример 2: дан файл
+     * 3 3 2 3
+     * 2 1 2
+     * 5 1 2 3 4 5
+     * ответ: 1, потому что у массива из 1й строки наибольший результат произведения макс и мин элементов = 3*3 = 9
+     *
+     * @return
+     */
+    public static int findArrayWithMaxMultiplicationOfMinAndMaxElement() {
+        //Given an array arr[] and an integer K where K is smaller than size of array,
+        // the task is to find the Kth smallest element in the given array.
+
+        // max(min * max)
+
+        String path = "/Users/ikisel/Documents/ilya/haltura/java_courses/courses_demo/src/main/resources/task1_input.txt";
+
+        // generate input
+        // arraySize K val1 val2 val3
+//        for (int i = 0; i < 100; i++) {
+//            Set<Integer> set = new HashSet<>();
+//            int arraySize = ThreadLocalRandom.current().nextInt(10, 100);
+//            //int k = ThreadLocalRandom.current().nextInt(1, arraySize - arraySize / 3);
+//            while (set.size() != arraySize) {
+//                int val = ThreadLocalRandom.current().nextInt(0, 9999);
+//                set.add(val);
+//            }
+//            String line = arraySize + " " + set.stream().map(String::valueOf).collect(Collectors.joining(" ")) + "\n";
+//            FileWriterUtil.getInstance().writeToFileEnd(path, line);
+//        }
+
+        List<String> inputLines = FileReaderUtil.readLinesFromFile(path);
+        int[] results = new int[100];
+        int resultsIdx = 0;
+        for (String line : inputLines) {
+            String[] inputLineSplit = line.split(" ");
+
+            int arrSize = Integer.valueOf(inputLineSplit[0]);
+
+            int arr[] = new int[arrSize];
+            for (int i = 0; i < arrSize; i++) {
+                arr[i] = Integer.valueOf(inputLineSplit[i + 1]);
+            }
+
+            int max = -1;
+            int min = 999999;
+
+            for (int i = 0; i < arr.length; i++) {
+                int curr = arr[i];
+                if (curr > max) {
+                    max = curr;
+                }
+                if (curr < min) {
+                    min = curr;
+                }
+            }
+
+            int currArrResult = max * min;
+            results[resultsIdx++] = currArrResult;
+        }
+
+        int max = 0;
+        int idx = 0;
+        for (int i = 0; i < results.length; i++) {
+            int curr = results[i];
+            if (curr > max) {
+                max = curr;
+                idx = i + 1;
+            }
+        }
+        System.out.println("idx = " + idx);
+        System.out.println(max);
+
+        //idx = 53
+        //14082961
+        return max;
     }
 
     public static int reversNumber(int number) {
         int rest;
         int revers = 0;
         while (number != 0) {
-
             rest = number % 10;
             number = number / 10;
             revers = revers * 10 + rest;
-            // System.out.println(revers);
         }
-
         return revers;
     }
 
     public static long findWordsCountOccurredOnce(String text) {
         Map<String, Long> map = Arrays.stream(text.trim().split("\\s+"))
-                .collect(Collectors.groupingBy(Function.identity(), HashMap::new, Collectors.counting()));
+            .collect(groupingBy(Function.identity(), HashMap::new, Collectors.counting()));
         return map.values().stream()
-                .filter(val -> val == 1)
-                .count();
+            .filter(val -> val == 1)
+            .count();
     }
 
     private static void showCollection(Collection collection) {
@@ -164,7 +314,6 @@ public class Demo {
      * exec.shutdown(); while (!exec.isTerminated()) { } }}
      */
 
-
     /**
      * Параметризация позволяет создавать классы, интерфейсы и методы,
      * в которых тип обрабатываемых данных задается как параметр.
@@ -184,7 +333,6 @@ public class Demo {
      * или любого из его суперклассов, в то же время разрешает добавлять туда экземпляры
      * класса Order и любых его подклассов.
      */
-
 
     /**
      * Подкласс дополняет члены суперкласса своими полями и методами.

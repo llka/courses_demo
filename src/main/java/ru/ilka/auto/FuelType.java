@@ -22,6 +22,17 @@ public enum FuelType {
     }
 
     public boolean isEcoFriendly() {
+        FuelType[] arr = values();
         return isEcoFriendly;
     }
+
+    public FuelType getValue(String name) {
+        for (FuelType val : values()) {
+            if (val.name().equals(name)) {
+                return val;
+            }
+        }
+        return null;
+    }
+
 }
