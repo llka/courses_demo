@@ -1,8 +1,9 @@
 package ru.ilka.animal;
 
 public class Cat extends Animal implements Jumpable {
-    protected int mustache;
-    private int legs;
+
+    protected static int mustache;
+    private static int legs;
 
     public Cat() {
     }

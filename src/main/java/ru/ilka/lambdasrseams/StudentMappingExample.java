@@ -78,6 +78,7 @@ public class StudentMappingExample {
                 )));
 
         System.out.println(mapOfSortedStudentsAndAverageMarkByCourse3);
+
     }
 
 }
