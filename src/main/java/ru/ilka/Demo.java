@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,14 +38,48 @@ import static java.util.stream.Collectors.groupingBy;
 @Slf4j
 public class Demo {
 
-    private static final int SIZE = 1000;
+    private static final int SIZE = 10_000_000;
     private static final FurnitureGenerator furnitureGenerator = new FurnitureGenerator();
     private static final Task57Demo task57Demo = new Task57Demo();
     private static ObjectGenerator<Wardrobe> wardrobeGenerator;
 
     public static void main(String... args) throws Exception {
-        шт
+        String a = "a";
+        a.contains("b");
+    }
 
+    public static List<Integer> mergeSortedLists(List<Integer> a, List<Integer> b) {
+        TreeSet<Integer> set = new TreeSet<>(a);
+        set.addAll(b);
+
+        return new ArrayList<>(set);
+    }
+
+    public static List<Integer> mergeSortedLists2(List<Integer> a, List<Integer> b) {
+        int aIndex = 0;
+        int bIndex = 0;
+        List<Integer> result = new ArrayList<>(a.size() + b.size());
+
+        if (aIndex < a.size() && bIndex < b.size()) {
+            while (aIndex < a.size() && bIndex < b.size()) {
+                if (a.get(aIndex) <= b.get(bIndex)) {
+                    result.add(a.get(aIndex));
+                    aIndex++;
+                } else {
+                    result.add(b.get(bIndex));
+                    bIndex++;
+                }
+            }
+        } else if (aIndex == a.size()) {
+            for (int i = bIndex; i < b.size(); i++) {
+                result.add(b.get(i));
+            }
+        } else {
+            for (int i = aIndex; i < a.size(); i++) {
+                result.add(a.get(i));
+            }
+        }
+        return result;
     }
 
     public static void exampleExtends(List<? extends Cat> list) {
