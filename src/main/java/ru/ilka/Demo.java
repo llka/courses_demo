@@ -1,6 +1,7 @@
 package ru.ilka;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.ilka.animal.Cat;
 import ru.ilka.event.Attendee;
 import ru.ilka.event.Event;
 import ru.ilka.event.EventRealm;
@@ -8,13 +9,13 @@ import ru.ilka.fileutil.FileReaderUtil;
 import ru.ilka.furniture.FurnitureGenerator;
 import ru.ilka.furniture.Wardrobe;
 import ru.ilka.insect.Butterfly;
-import ru.ilka.lambdasrseams.Pair;
 import ru.ilka.list.CustomLinkedList;
 import ru.ilka.multithreading.producerconsumer.Task57Demo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -23,41 +24,85 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.averagingInt;
-import static java.util.stream.Collectors.flatMapping;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.teeing;
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 public class Demo {
 
-    private static final int SIZE = 1000;
+    private static final int SIZE = 10_000_000;
     private static final FurnitureGenerator furnitureGenerator = new FurnitureGenerator();
     private static final Task57Demo task57Demo = new Task57Demo();
     private static ObjectGenerator<Wardrobe> wardrobeGenerator;
 
     public static void main(String... args) throws Exception {
-        Function<List<Student>, Map<Integer, Pair<String>>> groupStundetsByCourses = list -> list.stream()
-            .sorted(Comparator.comparing(Student::getName).thenComparing(Student::getSurname))
-            .collect(groupingBy(Student::getCourse,
-                TreeMap::new,
-                teeing(
-                    mapping(student -> student.getName() + " " + student.getSurname(), toList()),
-                    flatMapping(student -> student.getMarks().stream(), averagingInt(Integer::intValue)),
-                    Pair::new
-                )));
+        String a = "a";
+        a.contains("b");
+    }
+
+    public static List<Integer> mergeSortedLists(List<Integer> a, List<Integer> b) {
+        TreeSet<Integer> set = new TreeSet<>(a);
+        set.addAll(b);
+
+        return new ArrayList<>(set);
+    }
+
+    public static List<Integer> mergeSortedLists2(List<Integer> a, List<Integer> b) {
+        int aIndex = 0;
+        int bIndex = 0;
+        List<Integer> result = new ArrayList<>(a.size() + b.size());
+
+        if (aIndex < a.size() && bIndex < b.size()) {
+            while (aIndex < a.size() && bIndex < b.size()) {
+                if (a.get(aIndex) <= b.get(bIndex)) {
+                    result.add(a.get(aIndex));
+                    aIndex++;
+                } else {
+                    result.add(b.get(bIndex));
+                    bIndex++;
+                }
+            }
+        } else if (aIndex == a.size()) {
+            for (int i = bIndex; i < b.size(); i++) {
+                result.add(b.get(i));
+            }
+        } else {
+            for (int i = aIndex; i < a.size(); i++) {
+                result.add(a.get(i));
+            }
+        }
+        return result;
+    }
+
+    public static void exampleExtends(List<? extends Cat> list) {
+        System.out.println(list);
+    }
+
+    public static void exampleSuper(List<? super Cat> list) {
+        System.out.println(list);
+    }
+
+    private static <T extends CsvObjectWithId> Map<Integer, T> readObjectsFromFile(Path path, Function<String, T> objectMapper) {
+        return FileReaderUtil.readLinesFromFile(path.toString()).stream()
+            .map(objectMapper)
+            .collect(Collectors.toMap(T::getId, Function.identity()));
+    }
+
+    private static String randomString(int length) {
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        return ThreadLocalRandom.current().ints(leftLimit, rightLimit + 1)
+            .limit(length)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
     }
 
     private static List<Event> generateEvents(int size) {
@@ -268,6 +313,11 @@ public class Demo {
             return 1;
         }
         return (fibonacci(n - 1) + fibonacci(n - 2));
+    }
+
+    interface CsvObjectWithId {
+
+        int getId();
     }
 
     /**

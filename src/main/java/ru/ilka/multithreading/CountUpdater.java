@@ -20,8 +20,6 @@ public class CountUpdater implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 }
